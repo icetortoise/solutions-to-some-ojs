@@ -7,6 +7,7 @@ import java.util.HashMap;
 // this solution does not pass OJ because i overlooked the condition that elements in L are of the same length. This is 
 // actually a more general solution. 
 // In particular, if L[i] are all of the same length, the operatin to judge if S[a..a+len] is a substring is constant!
+// Potential improvement is around strStr, to use KMP or a suffix array!
 public class Solution {
 
     public ArrayList<Integer> findSubstring(String S, String[] L) {
