@@ -81,11 +81,12 @@ public class Solution {
 	    int mid = (start + end)/2;
 	    int endOfSub = sa[mid] + needle.length() > sa.length?sa.length:sa[mid] + needle.length();
 	    String candidate = haystack.substring(sa[mid], endOfSub);
-	    if(needle.equals(candidate)){
+	    int cmp = needle.compareTo(candidate);
+	    if(cmp == 0){
 		result.add(sa[mid]);
 		result = bsearch(haystack, needle, start, mid-1, sa, result);
 		return bsearch(haystack, needle, mid+1, end, sa, result);
-	    }else if(needle.compareTo(candidate) < 0){
+	    }else if(cmp < 0){
 		return bsearch(haystack, needle, start, mid-1, sa, result);
 	    }else{
 		return bsearch(haystack, needle, mid+1, end, sa, result);
