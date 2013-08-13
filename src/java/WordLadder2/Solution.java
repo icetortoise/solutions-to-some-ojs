@@ -1,11 +1,75 @@
 package WordLadder2;
 
 import java.util.*;
+public class Solution {
+    
+    public HashMap<String, ArrayList<String>> genParents(String start, String end, HashSet<String> dict){
+	HashMap<String, ArrayList<String>> parents = new HashMap<String, ArrayList<String>>();
+	HashSet<String> visited = new HashSet<String>();
+	ArrayList<String> q = new ArrayList<String>();
+	q.add(start);
+	visited.add(start);
+	while(q.size() > 0){
+	    HashSet<String> inThisLevel = new HashSet<String>();
+	    ArrayList<String> newq = new ArrayList<String>();
+	    boolean found = false;
+	    for(String s : q){
+		ArrayList<String> cans = getCandidates(s, dict, end);
+		for(String c : cans){
+		    if(visited.contains(c) && inThisLevel.contains(c)){
+			parents.get(c).add(s);
+		    }else if (!visited.contains(c)){
+			ArrayList<String> t = new ArrayList<String>();
+			t.add(s);
+			parents.put(c, t);
+			inThisLevel.add(c);
+			visited.add(c);
+			newq.add(c);
+			if(c.equals(end)){
+			    found = true;
+			}
+		    }
+		}
+	    }
+	    if(found){
+		break;
+	    }else{
+		q = newq;
+	    }
+	}
+	return parents;
+
+    }
+
+    public ArrayList<ArrayList<String>> findLadders(String start, String end, HashSet<String> dict) {
+	return buildResult(genParents(start, end, dict), end, start);
+    }
+    
+
+    public ArrayList<ArrayList<String>> buildResult(HashMap<String, ArrayList<String>> parents, String end, String start){
+	ArrayList<ArrayList<String>> result = new ArrayList<ArrayList<String>>();
+	if(end.equals(start)){
+	    ArrayList<String> sl = new ArrayList<String>();
+	    sl.add(start);
+	    result.add(sl);
+	    return result;
+	}
+	if(parents.containsKey(end)){
+	    for(String s : parents.get(end)){
+		ArrayList<ArrayList<String>> x = buildResult(parents, s, start);
+		for (ArrayList<String> path : x){
+		    path.add(end);
+		}
+		result.addAll(x);
+	    }
+	}
+	return result;
+    }
+
 // this didnt pass the large tests. From online discuss, this is the 'right' algorithm to use though, 
 // the reason this is not passing is probably because the use of hashmap(as graph), an 
 // array-based algorithm that work on indexes only would run faster.
-public class Solution {
-    public ArrayList<ArrayList<String>> findLadders(String start, String end, HashSet<String> dict) {
+    public ArrayList<ArrayList<String>> findLaddersSndTry(String start, String end, HashSet<String> dict) {
 	HashMap<String, ArrayList<String>> graph = buildGraph(start, end, dict);
 	ArrayList<ArrayList<String>> paths = new ArrayList<ArrayList<String>>();
 	ArrayList<String> path = new ArrayList<String>();
