@@ -5,10 +5,8 @@ public class Solution {
     
     public HashMap<String, ArrayList<String>> genParents(String start, String end, HashSet<String> dict){
 	HashMap<String, ArrayList<String>> parents = new HashMap<String, ArrayList<String>>();
-	HashSet<String> visited = new HashSet<String>();
 	ArrayList<String> q = new ArrayList<String>();
 	q.add(start);
-	visited.add(start);
 	while(q.size() > 0){
 	    HashSet<String> inThisLevel = new HashSet<String>();
 	    ArrayList<String> newq = new ArrayList<String>();
@@ -16,14 +14,13 @@ public class Solution {
 	    for(String s : q){
 		ArrayList<String> cans = getCandidates(s, dict, end);
 		for(String c : cans){
-		    if(visited.contains(c) && inThisLevel.contains(c)){
+		    if(parents.containsKey(c) && inThisLevel.contains(c)){
 			parents.get(c).add(s);
-		    }else if (!visited.contains(c)){
+		    }else if (!parents.containsKey(c)){
 			ArrayList<String> t = new ArrayList<String>();
 			t.add(s);
 			parents.put(c, t);
 			inThisLevel.add(c);
-			visited.add(c);
 			newq.add(c);
 			if(c.equals(end)){
 			    found = true;
