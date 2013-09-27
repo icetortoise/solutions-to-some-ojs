@@ -1,44 +1,62 @@
 package WildcardMatching;
 
+import java.util.*;
+
 public class Solution {
     public boolean isMatch(String s, String p) {
         // Start typing your Java solution below
         // DO NOT write main() function
-	StringBuffer sb = new StringBuffer();
-	char last = '0';
-	for(int i = 0; i < p.length(); i++){
-	    if(last == p.charAt(i) && last == '*'){continue;}
-	    last = p.charAt(i);
-	    sb.append(p.charAt(i));
-	}
-	p = sb.toString();
-	return isMatchImpl(s, 0, p, 0);
-    }
-    public boolean isMatchImpl(String s, int si, String p, int pi){
-	if(si == s.length() && pi == p.length()){
-	    return true;
-	}
-	if(si <= s.length() && pi < p.length() && p.charAt(pi) == '*'){
-	    if(isMatchImpl(s, si, p, pi+1)){
-		return true;
-	    }else{
-		return isMatchImpl(s, si+1, p, pi);
+	char[] pa = p.toCharArray();
+	int count = 0;
+	for(int i = 0; i < pa.length; i++){
+	    if(pa[i] != '*'){
+		count++;
 	    }
 	}
-	if(si >= s.length() || pi >= p.length()){
+	if(s.length() < count){
 	    return false;
 	}
-	if(p.charAt(pi) != '?' && p.charAt(pi) != '*' && si < s.length()){
-	    if(p.charAt(pi) == s.charAt(si)){
-		return isMatchImpl(s, si+1, p, pi+1);
-	    }else{
-		return false;
-	    }
-	}
-	if(p.charAt(pi) == '?' && si < s.length()) {
-	    return isMatchImpl(s, si+1, p, pi+1);
-	}
+
+	HashSet<Integer> set = new HashSet<Integer>();
+	dfs(pa, 0, set);
 	
-	return false; // never reach
+	//match
+	for(int i = 0; i < s.length(); i++){
+	    HashSet<Integer> matches = new HashSet<Integer>();
+	    for(int status : set){
+		if(status >= pa.length)
+		    continue;
+		if(pa[status] == '*'){
+		    addForStar(status, matches, pa);
+		}
+		else if( pa[status] == '?' || pa[status] == s.charAt(i)){
+		    matches.add(status+1);
+		    if(status + 1 < pa.length && pa[status+1] == '*'){
+			addForStar(status+1, matches, pa);
+		    }
+		}
+	    }
+	    set = matches;
+	}
+	return set.contains(pa.length);
+    }
+    
+    public void addForStar(int status, HashSet<Integer> matches, char[] pa){
+	matches.add(status);
+	matches.add(status+1);
+	if(status+1 < pa.length && pa[status+1] == '*'){
+	    addForStar(status+1, matches, pa);
+	}
+    }
+
+    public void dfs(char[] pa, int status, HashSet<Integer> set){
+	if(pa.length == 0){
+	    set.add(0);
+	    return;
+	}
+	if(status < pa.length && pa[status] == '*'){
+	    dfs(pa, status+1, set);
+	}
+	set.add(status);
     }
 }
