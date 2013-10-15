@@ -5,18 +5,31 @@ import java.util.ArrayList;
 
 public class BinarySearchTreeST<K extends Comparable,V>{
     // put; get; del; max; min; succ; pred; range
+    public enum Color {RED, BLACK}
+
     public class TreeNode{
 	public K key;
 	public V val;
 	public TreeNode left;
 	public TreeNode right;
 	public TreeNode parent;
+	public Color c = Color.BLACK;
 	public String toString(){
 	    return (key + " : "+ val);
 	}
+
+	public TreeNode(K key, V val, Color c){
+	    this.key = key;
+	    this.val = val;
+	    this.c = c;
+	}
+	public TreeNode(){
+	    //pass
+	}
+
     }
     
-    private TreeNode root;
+    public TreeNode root;
     
     public BinarySearchTreeST(){
 	root = null;
@@ -26,10 +39,10 @@ public class BinarySearchTreeST<K extends Comparable,V>{
 	put(key, val, root);
     }
     
-    public void put(K key, V val, TreeNode root){
+    private void put(K key, V val, TreeNode root){
 	if(root == null){
 	    root = new TreeNode();
-	    root.key = key; root.val = val;
+	    root.key = key; root.val = val; 
 	    this.root = root;
 	}else{
 	    if(root.key.compareTo(key) < 0){
@@ -56,12 +69,16 @@ public class BinarySearchTreeST<K extends Comparable,V>{
 	}
     }
 
+    private int recursion = 0;
     public V get(K key){
+	recursion = 0;
 	TreeNode n = getNode(key, root);
+	System.out.println("recursion: " + recursion);
 	return n == null ? null : n.val;
     }
-
+    
     public TreeNode getNode(K key, TreeNode node){
+	recursion++;
 	if(node == null){
 	    return null;
 	}else{
